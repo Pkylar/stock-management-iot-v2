@@ -112,6 +112,7 @@ export default function History() {
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jumlah</th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Keterangan</th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sumber</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Dibuat oleh</th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Waktu</th>
                 </tr>
               </thead>
@@ -162,6 +163,14 @@ export default function History() {
                       }`}>
                         {history.sumber === 'esp32_cam' ? '📷 ESP32' : '✋ Manual'}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div>
+                        <span className="text-sm text-gray-700">{history.creator?.name || 'System'}</span>
+                        <p className="text-xs text-gray-400 capitalize">
+                          {history.creator?.role === 'kepala_gudang' ? 'Kepala Gudang' : 'Staff'}
+                        </p>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>

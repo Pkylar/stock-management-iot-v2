@@ -10,7 +10,7 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Item::all();
+        $items = Item::with(['creator', 'updater'])->get();
         return response()->json($items);
     }
 
@@ -27,6 +27,7 @@ class ItemController extends Controller
             'kode_barang' => $request->kode_barang,
             'jumlah_stok' => $request->jumlah_stok,
             'status_terakhir' => $request->jumlah_stok > 0 ? 'masuk' : null,
+            'created_by' => auth()->id(),
         ]);
 
         if ($request->jumlah_stok > 0) {
@@ -36,6 +37,7 @@ class ItemController extends Controller
                 'jumlah' => $request->jumlah_stok,
                 'keterangan' => 'Stok awal',
                 'sumber' => 'manual',
+                'created_by' => auth()->id(),
             ]);
         }
 
@@ -59,7 +61,10 @@ class ItemController extends Controller
         ]);
 
         $oldStock = $item->jumlah_stok;
-        $item->update($request->only(['nama_barang', 'kode_barang', 'jumlah_stok']));
+        $item->update(array_merge(
+            $request->only(['nama_barang', 'kode_barang', 'jumlah_stok']),
+            ['updated_by' => auth()->id()]
+        ));
 
         $stockDiff = $request->jumlah_stok - $oldStock;
         if ($stockDiff != 0) {
@@ -72,6 +77,7 @@ class ItemController extends Controller
                 'jumlah' => abs($stockDiff),
                 'keterangan' => 'Update manual',
                 'sumber' => 'manual',
+                'created_by' => auth()->id(),
             ]);
         }
 
@@ -110,6 +116,7 @@ class ItemController extends Controller
             'jumlah' => $jumlah,
             'keterangan' => $request->keterangan ?? 'Stok keluar manual',
             'sumber' => 'manual',
+            'created_by' => auth()->id(),
         ]);
 
         // Hapus barang dari stok jika stok 0
@@ -151,6 +158,7 @@ class ItemController extends Controller
                 'kode_barang' => $request->kode_barang,
                 'jumlah_stok' => $request->jumlah,
                 'status_terakhir' => 'masuk',
+                'created_by' => 1, // Default system user for ESP32
             ]);
         }
 
@@ -160,6 +168,7 @@ class ItemController extends Controller
             'jumlah' => $request->jumlah,
             'keterangan' => 'Scan QR ESP32',
             'sumber' => 'esp32_cam',
+            'created_by' => 1, // Default system user for ESP32
         ]);
 
         return response()->json([

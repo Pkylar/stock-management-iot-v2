@@ -9,7 +9,7 @@ class StockHistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = StockHistory::with('item');
+        $query = StockHistory::with(['item', 'creator']);
 
         if ($request->has('tipe')) {
             $query->where('tipe', $request->tipe);
@@ -21,7 +21,7 @@ class StockHistoryController extends Controller
 
     public function masuk()
     {
-        $histories = StockHistory::with('item')
+        $histories = StockHistory::with(['item', 'creator'])
             ->where('tipe', 'masuk')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -30,7 +30,7 @@ class StockHistoryController extends Controller
 
     public function keluar()
     {
-        $histories = StockHistory::with('item')
+        $histories = StockHistory::with(['item', 'creator'])
             ->where('tipe', 'keluar')
             ->orderBy('created_at', 'desc')
             ->get();

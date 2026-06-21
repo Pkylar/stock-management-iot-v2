@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'http://localhost:8001/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -20,8 +20,8 @@ api.interceptors.request.use((config) => {
 export const auth = {
   login: (email: string, password: string) =>
     api.post('/login', { email, password }),
-  register: (name: string, email: string, password: string) =>
-    api.post('/register', { name, email, password }),
+  register: (name: string, email: string, password: string, role: string) =>
+    api.post('/register', { name, email, password, role }),
   logout: () => api.post('/logout'),
   getUser: () => api.get('/user'),
 };

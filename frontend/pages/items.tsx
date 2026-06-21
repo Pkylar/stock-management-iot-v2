@@ -239,6 +239,7 @@ export default function Items() {
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kode Barang</th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stok</th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Dibuat oleh</th>
                   <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                 </tr>
               </thead>
@@ -281,6 +282,19 @@ export default function Items() {
                       }`}>
                         {item.status_terakhir === 'masuk' ? '📥 Di Gudang' : item.status_terakhir === 'keluar' ? '📤 Keluar' : '⏳ Belum scan'}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div>
+                        <span className="text-sm text-gray-700">{item.creator?.name || 'System'}</span>
+                        <p className="text-xs text-gray-400">
+                          {item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '-'}
+                        </p>
+                        {item.updated_by && (
+                          <p className="text-xs text-orange-600 mt-0.5">
+                            Diupdate oleh: {item.updater?.name}
+                          </p>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end space-x-1">

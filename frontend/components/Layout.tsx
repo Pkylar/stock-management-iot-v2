@@ -89,7 +89,12 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">{user.name?.charAt(0).toUpperCase()}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                <div>
+                  <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                  <p className="text-xs text-gray-500 capitalize">
+                    {user.role === 'kepala_gudang' ? 'Kepala Gudang' : 'Staff'}
+                  </p>
+                </div>
               </div>
               <button
                 onClick={handleLogout}

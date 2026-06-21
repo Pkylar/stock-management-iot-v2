@@ -118,7 +118,7 @@ void setup() {
 }
 
 unsigned long lastRestart = millis();
-const unsigned long RESTART_INTERVAL = 30 * 60 * 1000; // 30 menit
+const unsigned long RESTART_INTERVAL = 10 * 60 * 1000; // 10 menit
 
 void loop() {
   server.handleClient();

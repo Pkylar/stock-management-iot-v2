@@ -14,8 +14,14 @@ class StockHistory extends Model
         'tipe',
         'jumlah',
         'keterangan',
-        'sumber'
+        'sumber',
+        'created_by'
     ];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
     public function item()
     {

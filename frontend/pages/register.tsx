@@ -8,6 +8,7 @@ export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('staff');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function Register() {
     setError('');
 
     try {
-      const response = await auth.register(name, email, password);
+      const response = await auth.register(name, email, password, role);
       Cookies.set('token', response.data.access_token);
       router.push('/dashboard');
     } catch (error: any) {
@@ -117,6 +118,19 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
+                <select
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  <option value="staff">Staff</option>
+                  <option value="kepala_gudang">Kepala Gudang</option>
+                </select>
               </div>
 
               <button
