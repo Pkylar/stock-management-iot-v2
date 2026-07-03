@@ -75,9 +75,9 @@ void setup() {
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
-  config.jpeg_quality = 10;
-  config.frame_size = FRAMESIZE_QVGA;
-  config.fb_count = 2;
+  config.jpeg_quality = 4;
+  config.frame_size = FRAMESIZE_VGA;
+  config.fb_count = 1;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.grab_mode = CAMERA_GRAB_LATEST;
 
