@@ -18,8 +18,8 @@ import numpy as np
 # ============ CONFIG ============
 ESP32_IP = "10.122.56.215"
 BACKEND_URL = "http://127.0.0.1:8000/api/scan-barcode"
-SCAN_INTERVAL = 2  # seconds between scans
-COOLDOWN = 3       # seconds before same QR can be scanned again
+SCAN_INTERVAL = 0.5  # seconds between scans
+COOLDOWN = 2       # seconds before same QR can be scanned again
 # ================================
 
 ESP32_CAPTURE = f"http://{ESP32_IP}/capture"
