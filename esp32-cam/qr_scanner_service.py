@@ -13,9 +13,17 @@ COOLDOWN = 2
 # ================================
 
 ESP32_CAPTURE = f"http://{ESP32_IP}/capture"
-detector = cv2.QRCodeDetector()
 last_payload = ""
 last_time = 0
+
+try:
+    detector = cv2.wechat_qrcode_WeChatQRCode()
+    use_wechat = True
+    print("Using WeChatQRCode detector")
+except:
+    detector = cv2.QRCodeDetector()
+    use_wechat = False
+    print("Using default QRCodeDetector")
 
 def parse_qr(payload):
     parts = payload.rsplit('_', 2)
@@ -45,10 +53,17 @@ def capture_image():
         if resp.status_code != 200 or len(resp.content) < 1000:
             return None
         img_array = np.frombuffer(resp.content, dtype=np.uint8)
-        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-        return img
+        return cv2.imdecode(img_array, cv2.IMREAD_COLOR)
     except:
         return None
+
+def decode_qr(img):
+    if use_wechat:
+        results, _ = detector.detectAndDecode(img)
+        return results[0] if results else ""
+    else:
+        val, _, _ = detector.detectAndDecode(img)
+        return val or ""
 
 print(f"=== QR Scanner Service ===")
 print(f"ESP32: {ESP32_CAPTURE}")
@@ -64,7 +79,7 @@ while True:
             time.sleep(SCAN_INTERVAL)
             continue
 
-        val, _, _ = detector.detectAndDecode(img)
+        val = decode_qr(img)
         if val and (val != last_payload or time.time() - last_time > COOLDOWN):
             data = parse_qr(val)
             if data:
