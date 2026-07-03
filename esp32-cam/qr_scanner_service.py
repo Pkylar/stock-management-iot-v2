@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""
-QR Scanner Service
-Polls ESP32 camera, decodes QR codes, sends data to Laravel backend.
-Run this on the same machine as Laravel.
-
-Install: pip install opencv-python-headless requests
-Usage:   python qr_scanner_service.py
-
-Config: Edit ESP32_IP and BACKEND_URL below.
-"""
 import time
 import sys
 import requests
@@ -18,18 +8,16 @@ import numpy as np
 # ============ CONFIG ============
 ESP32_IP = "10.122.56.215"
 BACKEND_URL = "http://127.0.0.1:8000/api/scan-barcode"
-SCAN_INTERVAL = 0.5  # seconds between scans
-COOLDOWN = 2       # seconds before same QR can be scanned again
+SCAN_INTERVAL = 0.5
+COOLDOWN = 2
 # ================================
 
 ESP32_CAPTURE = f"http://{ESP32_IP}/capture"
 detector = cv2.QRCodeDetector()
 last_payload = ""
 last_time = 0
-session = requests.Session()
 
 def parse_qr(payload):
-    """Parse QR format: kode_barang_jumlah_tipe"""
     parts = payload.rsplit('_', 2)
     if len(parts) != 3:
         return None
@@ -45,12 +33,22 @@ def parse_qr(payload):
     return {"kode_barang": kode, "jumlah": jumlah, "tipe": tipe}
 
 def send_to_backend(data):
-    """Send parsed QR data to Laravel backend"""
     try:
         r = requests.post(BACKEND_URL, json=data, headers={"Accept": "application/json"}, timeout=5)
         return r.status_code, r.json() if r.status_code == 200 else r.text
     except Exception as e:
         return 0, str(e)
+
+def capture_image():
+    try:
+        resp = requests.get(ESP32_CAPTURE, timeout=10)
+        if resp.status_code != 200 or len(resp.content) < 1000:
+            return None
+        img_array = np.frombuffer(resp.content, dtype=np.uint8)
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        return img
+    except:
+        return None
 
 print(f"=== QR Scanner Service ===")
 print(f"ESP32: {ESP32_CAPTURE}")
@@ -60,14 +58,9 @@ print()
 
 while True:
     try:
-        resp = session.get(ESP32_CAPTURE, timeout=10)
-        if resp.status_code != 200:
-            time.sleep(SCAN_INTERVAL)
-            continue
-
-        img_array = np.frombuffer(resp.content, dtype=np.uint8)
-        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        img = capture_image()
         if img is None:
+            print("[ERR] Cannot connect to ESP32 - check WiFi")
             time.sleep(SCAN_INTERVAL)
             continue
 
@@ -85,10 +78,6 @@ while True:
             else:
                 print(f"[WARN] Invalid QR format: {val}")
 
-    except requests.exceptions.ConnectionError:
-        print("[ERR] Cannot connect to ESP32 - check WiFi")
-    except requests.exceptions.Timeout:
-        pass  # normal when ESP32 is busy
     except KeyboardInterrupt:
         print("\nStopped.")
         sys.exit(0)

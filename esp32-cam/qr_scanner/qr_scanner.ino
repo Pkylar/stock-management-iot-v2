@@ -75,7 +75,7 @@ void setup() {
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
-  config.jpeg_quality = 6;
+  config.jpeg_quality = 8;
   config.frame_size = FRAMESIZE_QVGA;
   config.fb_count = 2;
   config.fb_location = CAMERA_FB_IN_PSRAM;
