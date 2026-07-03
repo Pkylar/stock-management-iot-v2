@@ -59,7 +59,7 @@ print()
 
 while True:
     try:
-        resp = requests.get(ESP32_CAPTURE, timeout=30)
+        resp = requests.get(ESP32_CAPTURE, timeout=10, stream=False)
         if resp.status_code != 200:
             time.sleep(SCAN_INTERVAL)
             continue
