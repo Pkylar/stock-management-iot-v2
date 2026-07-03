@@ -26,6 +26,7 @@ ESP32_CAPTURE = f"http://{ESP32_IP}/capture"
 detector = cv2.QRCodeDetector()
 last_payload = ""
 last_time = 0
+session = requests.Session()
 
 def parse_qr(payload):
     """Parse QR format: kode_barang_jumlah_tipe"""
@@ -59,7 +60,7 @@ print()
 
 while True:
     try:
-        resp = requests.get(ESP32_CAPTURE, timeout=10, stream=False)
+        resp = session.get(ESP32_CAPTURE, timeout=10)
         if resp.status_code != 200:
             time.sleep(SCAN_INTERVAL)
             continue
