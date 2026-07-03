@@ -71,13 +71,6 @@ while True:
             time.sleep(SCAN_INTERVAL)
             continue
 
-        # Preprocess: upscale + sharpen for better QR detection
-        img = cv2.resize(img, (640, 480))
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (3, 3), 0)
-        _, gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        img = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-
         val, _, _ = detector.detectAndDecode(img)
         if val and (val != last_payload or time.time() - last_time > COOLDOWN):
             data = parse_qr(val)
