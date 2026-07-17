@@ -6,10 +6,10 @@ import cv2
 import numpy as np
 
 # ============ CONFIG ============
-ESP32_IP = "10.122.56.215"
+ESP32_IP = "10.246.250.179"
 BACKEND_URL = "http://127.0.0.1:8000/api/scan-barcode"
-SCAN_INTERVAL = 0.5
-COOLDOWN = 2
+SCAN_INTERVAL = 0.1
+COOLDOWN = 3
 # ================================
 
 ESP32_CAPTURE = f"http://{ESP32_IP}/capture"
@@ -49,11 +49,18 @@ def send_to_backend(data):
 
 def capture_image():
     try:
-        resp = requests.get(ESP32_CAPTURE, timeout=10)
+        resp = requests.get(ESP32_CAPTURE, timeout=3)
         if resp.status_code != 200 or len(resp.content) < 1000:
             return None
         img_array = np.frombuffer(resp.content, dtype=np.uint8)
-        return cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        if img is None:
+            return None
+        # Resize kecil biar decode lebih cepat
+        img = cv2.resize(img, (320, 240))
+        # Sharpen biar QR lebih mudah dibaca
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
     except:
         return None
 

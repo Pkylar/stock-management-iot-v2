@@ -75,9 +75,9 @@ void setup() {
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
-  config.jpeg_quality = 8;
+  config.jpeg_quality = 12;
   config.frame_size = FRAMESIZE_QVGA;
-  config.fb_count = 2;
+  config.fb_count = 1;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.grab_mode = CAMERA_GRAB_LATEST;
 
@@ -89,8 +89,12 @@ void setup() {
 
   sensor_t *s = esp_camera_sensor_get();
   s->set_brightness(s, 1);
-  s->set_contrast(s, 1);
+  s->set_contrast(s, 2);
   s->set_sharpness(s, 2);
+  s->set_saturation(s, -1);
+  s->set_exposure_ctrl(s, 1);
+  s->set_aec2(s, 1);
+  s->set_gain_ctrl(s, 1);
 
   WiFi.begin(ssid, password);
   int att = 0;
