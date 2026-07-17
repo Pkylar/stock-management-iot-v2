@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 import time
 import sys
+import os
 import requests
 import cv2
 import numpy as np
+
+os.environ["OPENCV_LOG_LEVEL"] = "SILENT"
 
 # ============ CONFIG ============
 ESP32_IP = "10.246.250.179"
@@ -52,13 +55,14 @@ def capture_image():
         resp = requests.get(ESP32_CAPTURE, timeout=3)
         if resp.status_code != 200 or len(resp.content) < 1000:
             return None
+        # Cek JPEG header & footer valid
+        if resp.content[:2] != b'\xff\xd8' or resp.content[-2:] != b'\xff\xd9':
+            return None
         img_array = np.frombuffer(resp.content, dtype=np.uint8)
         img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         if img is None:
             return None
-        # Resize kecil biar decode lebih cepat
         img = cv2.resize(img, (320, 240))
-        # Sharpen biar QR lebih mudah dibaca
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
     except:
